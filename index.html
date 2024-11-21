@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <title>Movimentação do Boneco</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-size: 16px;
+            background-image: url(fundo.jpg);
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-repeat: no-repeat;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        .cerca {
+            background-image: url(cercaa.png);
+            background-size: 150px;
+            width: 150px;
+            height: 100px;
+            position: absolute;
+            bottom: 80px;
+            right: 20px;
+            left: 1200px;
+        }
+
+        .boneco {
+            width: 90px;
+            height: 80px;
+            transform: scale(3);
+            background-image: url(animal.png);
+            position: absolute;
+            bottom: 80px;
+            left: 90px;
+            background-position: 0 -20px;
+        }
+
+        .boneco.direita { background-position: -290px -20px; }
+        .boneco.direita2 { background-position: -480px -20px; }
+        .boneco.direita3 { background-position: -678px -20px; }
+        .boneco.direita4 { background-position: -868px -20px; }
+        .boneco.direita5 { background-position: -1150px -20px; }
+        .boneco.direita6 { background-position: -1350px -10px; }
+        .boneco.direita7 { background-position: -1540px -20px; }
+        .boneco.direita8 { background-position: -1730px -20px; }
+        .boneco.direita9 { background-position: -1928px -10px; }
+        .boneco.direita10 { background-position: -2118px -20px; }
+    </style>
+</head>
+<body>
+    <div class="boneco"></div>
+    <div class="cerca"></div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            const boneco = $('.boneco');
+            const V = 40;
+            let pulando = false;
+            let animacaoIndex = 0;
+            const larguraTela = $(window).width();
+            const larguraBoneco = boneco.width() * 3; 
+
+            let moverDireita = false;
+            let moverEsquerda = false;
+
+            function moverBoneco() {
+                const posicaoAtual = parseInt(boneco.css('left')) || 0;
+
+                if (moverDireita && posicaoAtual + V + larguraBoneco <= larguraTela) {
+                    animacaoIndex = (animacaoIndex + 1) % 10;
+                    for (let i = 1; i <= 10; i++) {
+                        boneco.removeClass(`direita${i}`);
+                    }
+                    if (animacaoIndex > 0) {
+                        boneco.addClass(`direita${animacaoIndex}`);
+                    }
+                    boneco.css('left', posicaoAtual + V + 'px');
+                } else if (moverEsquerda && posicaoAtual - V >= 0) {
+                    animacaoIndex = (animacaoIndex + 1) % 10;
+                    for (let i = 1; i <= 10; i++) {
+                        boneco.removeClass(`direita${i}`);
+                    }
+                    if (animacaoIndex > 0) {
+                        boneco.addClass(`direita${animacaoIndex}`);
+                    }
+                    boneco.css('left', posicaoAtual - V + 'px');
+                }
+            }
+
+            function pularBoneco() {
+                if (pulando) return;
+                pulando = true;
+                const posicaoInicial = parseInt(boneco.css('bottom'));
+
+                boneco.animate({ bottom: posicaoInicial + 250 }, 400)
+                    .animate({ bottom: posicaoInicial }, 350, () => {
+                        pulando = false;
+                    });
+            }
+
+            $(document).on('keydown', function (evento) {
+                if (evento.key === 'd') {
+                    moverDireita = true;
+                } else if (evento.key === 'a') {
+                    moverEsquerda = true;
+                } else if (evento.key === ' ') {
+                    pularBoneco();
+                }
+            });
+
+            $(document).on('keyup', function (evento) {
+                if (evento.key === 'd') {
+                    moverDireita = false;
+                } else if (evento.key === 'a') {
+                    moverEsquerda = false;
+                }
+            });
+
+            setInterval(function () {
+                moverBoneco();
+            }, 50); 
+        });
+    </script>
+</body>
+</html>
